@@ -1,0 +1,417 @@
+<title>明日小作家書架</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<style>
+/* Layout: 藏書間（校園照片入口＋學年度書櫃）→ 書櫃（六層年級層板，書背直排）→ 翻頁閱讀。
+   刻意只做淡色單一主題：配色取自校舍的黃、粉、綠。 */
+:root{
+  color-scheme:light;
+  --bg:#FFFCF1; --paper:#FFFFFF; --ink:#2B3140; --muted:#636B7A; --line:#E6DFC8;
+  --yellow:#F5CF55; --pink:#E8728C; --green:#3E9C73; --wood:#E9C78F; --wood-d:#C99A5B;
+  --pencil:#7A7F8A; --seal:#D2453B; --focus:#2F6FC4;
+  --g-poem:#4A86C8; --g-prose:#3E9A6E; --g-diary:#E58C34; --g-tale:#B565A7;
+  --f-hand:"LXGW WenKai TC","Kaiti TC","BiauKai","DFKai-SB",serif;
+  --f-body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  --cur:url("images/cursor.png") 16 16, pointer;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background-color:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.7;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cg fill='none' stroke='%237A7F8A' stroke-width='1.6' stroke-linecap='round' opacity='.22'%3E%3Cpath d='M30 40l6 12 13 2-10 9 3 13-12-7-12 7 3-13-10-9 13-2z'/%3E%3Cpath d='M180 60c10-14 30-4 24 10s-26 10-22-4 22-12 28 0'/%3E%3Cpath d='M40 190c20-10 40 10 60 0s40 10 60 0'/%3E%3Cpath d='M200 170l30 30M226 196l8-3-3 8M200 170l-6-2 2 6'/%3E%3C/g%3E%3Cg fill='%237A7F8A' opacity='.2' font-family='serif' font-size='22'%3E%3Ctext x='120' y='40'%3Eㄅ%3C/text%3E%3Ctext x='90' y='130'%3Eㄆ%3C/text%3E%3Ctext x='220' y='120'%3Eㄇ%3C/text%3E%3Ctext x='20' y='120'%3Eㄈ%3C/text%3E%3Ctext x='150' y='240'%3E字%3C/text%3E%3C/g%3E%3C/svg%3E")}
+.wrap{max-width:1140px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px 48px}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+a{color:var(--focus)}
+
+/* 刊頭 */
+.mast{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.mast img{width:56px;height:56px}
+.grid-title{display:flex;margin:0;font-family:var(--f-hand);font-weight:700;font-size:clamp(26px,5vw,40px);line-height:1}
+.grid-title span{display:grid;place-items:center;width:1.4em;height:1.4em;border:2px solid var(--green);margin-left:-2px;background:var(--paper);position:relative}
+.grid-title span:first-child{margin-left:0}
+.grid-title span::after{content:"";position:absolute;inset:0;background:linear-gradient(var(--green),var(--green)) center/1px 100% no-repeat,linear-gradient(var(--green),var(--green)) center/100% 1px no-repeat;opacity:.15}
+.mast-sub{font-family:var(--f-hand);font-size:22px;font-weight:700}
+.notice{font-size:13px;color:var(--muted);margin:10px 0 0}
+.notice b{color:var(--seal)}
+
+/* 藏書間 */
+#view>*{animation:fadein .45s ease both}
+@keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.entry{display:grid;justify-items:center;text-align:center;gap:18px;margin-top:22px}
+.photo{position:relative;background:var(--paper);padding:12px 12px 40px;transform:rotate(-1.4deg);box-shadow:0 10px 22px -12px rgba(60,50,20,.35);margin:0;border:0;display:block;width:min(760px,100%);cursor:pointer;transition:transform .3s}
+.photo:hover{transform:rotate(0) scale(1.015)}
+.entry.walking .photo{animation:walkin .8s cubic-bezier(.5,0,.75,0) forwards}
+.entry.walking h2,.entry.walking .hint{transition:opacity .3s;opacity:0}
+@keyframes walkin{to{transform:rotate(0) scale(2.8);opacity:0;filter:blur(5px)}}
+.hint{display:inline-flex;gap:8px;align-items:center;font-family:var(--f-hand);font-size:19px;color:var(--ink)}
+.hint i{width:10px;height:10px;border-radius:50%;background:var(--pink);animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.7);opacity:.4}}
+.photo img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover}
+.photo figcaption{position:absolute;left:0;right:0;bottom:8px;text-align:center;font-family:var(--f-hand);font-size:17px;color:var(--muted)}
+.photo::before,.photo::after{content:"";position:absolute;width:110px;height:28px;background:color-mix(in srgb,var(--yellow) 70%,transparent);top:-12px}
+.photo::before{left:20px;transform:rotate(-8deg)}
+.photo::after{right:20px;transform:rotate(7deg);background:color-mix(in srgb,var(--pink) 55%,transparent)}
+.entry h2,.cases-title{font-family:var(--f-hand);font-weight:700;font-size:clamp(26px,3.6vw,36px);line-height:1.3;margin:0;text-wrap:balance}
+.lead{margin:6px 0 20px;color:var(--muted);max-width:34em}
+.cases{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:22px}
+.case-card{display:flex;gap:16px;align-items:center;text-align:left;background:var(--paper);border:2px solid var(--line);border-radius:14px;padding:16px;cursor:pointer;transition:transform .2s,border-color .2s}
+.case-card:hover{transform:translateY(-3px);border-color:var(--wood-d)}
+.mini{flex:0 0 auto;width:78px;padding:5px;background:var(--wood);border:3px solid var(--wood-d);border-radius:4px;display:grid;gap:4px}
+.mini div{height:13px;display:flex;align-items:flex-end;gap:1px;border-bottom:2px solid var(--wood-d)}
+.mini i{flex:1;background:var(--c);height:var(--h)}
+.case-card strong{display:block;font-family:var(--f-hand);font-size:22px}
+.case-card span{color:var(--muted);font-size:14px;font-variant-numeric:tabular-nums}
+
+/* 書櫃 */
+.case-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 24px;margin-top:22px}
+.back{border:0;background:none;cursor:pointer;color:var(--focus);padding:4px 0;font-size:15px}
+.case-head h2{font-family:var(--f-hand);font-weight:700;font-size:30px;margin:0}
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.chip{border:1.5px solid var(--line);background:var(--paper);border-radius:999px;padding:4px 13px;cursor:pointer;font-size:14px;display:inline-flex;align-items:center;gap:6px}
+.chip i{width:10px;height:10px;border-radius:50%;background:var(--c,var(--muted))}
+.chip[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:var(--paper)}
+.seg{display:inline-flex;border:1.5px solid var(--line);border-radius:999px;padding:2px;background:var(--paper);font-size:13px}
+.seg button{border:0;background:none;padding:3px 11px;border-radius:999px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--yellow)}
+.stage{perspective:1500px;margin-top:18px;padding-bottom:30px;position:relative}
+.stage::after{content:"";position:absolute;left:-4%;right:-4%;bottom:0;height:46px;background:radial-gradient(ellipse at 50% 0,rgba(120,90,40,.22),transparent 70%);z-index:-1}
+.bookcase{background:var(--wood-d);border:12px solid var(--wood-d);border-radius:8px;padding:10px 12px 0;box-shadow:0 26px 40px -22px rgba(80,55,20,.6),inset 0 0 0 2px rgba(255,255,255,.18)}
+/* 書籤（文類入口） */
+.ribbons{display:flex;gap:10px;align-items:flex-start;border-top:5px solid var(--wood-d);border-radius:3px;padding:0 12px;min-height:132px}
+.ribbon{width:42px;height:var(--len,86px);border:0;padding:10px 0 0;background:var(--c);color:#fff;cursor:pointer;clip-path:polygon(0 0,100% 0,100% 100%,50% 84%,0 100%);display:flex;flex-direction:column;align-items:center;gap:4px;transition:height .25s;box-shadow:inset -4px 0 0 rgba(0,0,0,.1)}
+.ribbon:hover{height:calc(var(--len,86px) + 12px)}
+.ribbon span{writing-mode:vertical-rl;white-space:nowrap;font-family:var(--f-hand);font-weight:700;font-size:15px;letter-spacing:.08em;line-height:1}
+.ribbon small{font-size:11px;font-variant-numeric:tabular-nums;opacity:.9}
+.ribbon.all{background:var(--wood-d)}
+.ribbon-tip{font-size:13px;color:var(--muted);margin:4px 0 0}
+/* 文類專區 */
+.gpage-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:12px 24px;margin-top:22px}
+.gpage-head h2{font-family:var(--f-hand);font-weight:700;font-size:30px;margin:0;display:flex;align-items:center;gap:12px}
+.gpage-head h2 i{width:16px;height:30px;background:var(--c);clip-path:polygon(0 0,100% 0,100% 100%,50% 80%,0 100%)}
+.gsec{margin-top:30px}
+.gsec h3{font-family:var(--f-hand);font-size:21px;margin:0 0 14px;padding-bottom:6px;border-bottom:2px dashed var(--line);display:flex;gap:10px;align-items:baseline}
+.gsec h3 small{font-family:var(--f-body);font-size:13px;color:var(--muted);font-weight:400}
+.covers{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:24px 20px}
+.gcover{border:0;background:none;padding:0;cursor:var(--cur);text-align:left;display:grid;gap:8px;min-width:0}
+.gcover .cover{height:auto;width:100%;max-height:none;transition:transform .2s}
+.gcover:hover .cover{transform:translateY(-5px) rotate(-1.5deg)}
+.gcover b{font-family:var(--f-hand);font-size:16px;line-height:1.3}
+.gcover span.c{font-size:13px;color:var(--muted)}
+.gnone{color:var(--muted);margin-top:30px}
+.shelf{display:grid;grid-template-columns:76px minmax(0,1fr);align-items:end;position:relative;margin-bottom:16px;background:linear-gradient(180deg,rgba(90,58,20,.38),rgba(90,58,20,.1) 34%,rgba(90,58,20,.18)),#F2DCB0;box-shadow:inset 6px 0 10px -6px rgba(60,35,10,.45),inset -6px 0 10px -6px rgba(60,35,10,.45)}
+.shelf::after{content:"";position:absolute;left:-2px;right:-2px;bottom:-16px;height:16px;background:linear-gradient(#F6E2BA,#E2B97A 45%,#B98545);box-shadow:0 4px 6px -3px rgba(60,35,10,.5);z-index:1}
+.shelf-label{align-self:stretch;display:flex;flex-direction:column;justify-content:center;align-items:center;font-family:var(--f-hand);font-weight:700;font-size:17px;border-right:2px dashed var(--wood-d);line-height:1.3;padding:6px}
+.shelf-label small{font-family:var(--f-body);font-weight:400;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.spines{display:flex;align-items:flex-end;gap:4px;overflow-x:auto;padding:16px 12px 0;min-height:250px;scrollbar-width:thin}
+.spine .who{top:auto!important;bottom:20px;font-family:var(--f-body)!important;font-weight:500!important;font-size:11px!important;line-height:1.2!important;letter-spacing:.02em!important;opacity:.95;padding-top:6px;border-top:1px solid rgba(255,255,255,.55)}
+.spine{flex:0 0 auto;width:46px;height:var(--h);border:0;padding:0;background:var(--gc);border-radius:3px 3px 0 0;cursor:var(--cur);position:relative;transition:transform .18s,opacity .2s;box-shadow:inset 3px 0 0 rgba(255,255,255,.25),inset -3px 0 0 rgba(0,0,0,.14),7px 0 9px -5px rgba(50,30,10,.45)}
+.flying{position:fixed;z-index:70;margin:0;pointer-events:none;transition:none}
+.kid{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) - 6px);left:40px;width:120px;height:170px;z-index:40;pointer-events:none;transition:left .7s cubic-bezier(.4,.1,.3,1)}
+.kid #arm{transform-box:view-box;transform-origin:86px 74px;transition:transform .45s ease}
+.kid.walk .leg-l{animation:step .35s ease-in-out infinite alternate}
+.kid.walk .leg-r{animation:step .35s ease-in-out infinite alternate-reverse}
+.kid.walk .body{animation:bob .35s ease-in-out infinite alternate}
+.leg-l,.leg-r{transform-box:fill-box;transform-origin:50% 0}
+@keyframes step{from{transform:rotate(-9deg)}to{transform:rotate(9deg)}}
+@keyframes bob{to{transform:translateY(-3px)}}
+.kid-say{position:absolute;bottom:150px;left:58px;white-space:nowrap;background:var(--paper);border:2px solid var(--ink);border-radius:14px;padding:3px 10px;font-family:var(--f-hand);font-size:15px;opacity:0;transform:translateY(6px);transition:.25s}
+.kid-say.on{opacity:1;transform:none}
+@media (hover:none),(max-width:820px){.kid{display:none}}
+.spine::before{content:"";position:absolute;left:0;right:0;top:12px;height:3px;background:rgba(255,255,255,.55)}
+.spine::after{content:"";position:absolute;left:0;right:0;bottom:12px;height:3px;background:rgba(255,255,255,.55)}
+.spine span{position:absolute;top:22px;left:50%;transform:translateX(-50%);writing-mode:vertical-rl;font-family:var(--f-hand);font-weight:700;font-size:var(--fs,14px);line-height:1;letter-spacing:.06em;color:#fff;text-shadow:0 1px 1px rgba(0,0,0,.25);max-height:calc(var(--h) - 112px);overflow:hidden}
+.spine.star::before{background:var(--yellow);height:5px}
+.spine:hover{transform:translateY(-12px)}
+.spine.dim{opacity:.22}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;color:var(--muted);margin-top:12px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--c);margin-right:5px;vertical-align:-1px}
+.foot{margin-top:44px;padding-top:16px;border-top:1.5px dashed var(--line);color:var(--muted);font-size:13px;display:grid;gap:4px}
+
+/* 閱讀 */
+.reader{position:fixed;inset:0;z-index:50;background:rgba(43,49,64,.55);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:calc(env(safe-area-inset-top,0px) + 14px) max(14px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 14px) max(14px,env(safe-area-inset-left,0px))}
+.reader-box{width:min(1000px,100%);display:flex;flex-direction:column;gap:12px;max-height:100%}
+.reader-top,.reader-nav{display:flex;justify-content:space-between;align-items:center;gap:12px;color:#fff}
+.reader-top h3{margin:0;font-family:var(--f-hand);font-size:19px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.reader-nav{font-size:14px;font-variant-numeric:tabular-nums}
+.icon-btn{border:1.5px solid rgba(255,255,255,.6);background:rgba(255,255,255,.1);color:#fff;border-radius:999px;padding:6px 14px;cursor:pointer;flex:0 0 auto}
+.icon-btn:disabled{opacity:.35;cursor:default}
+.spread{display:grid;grid-template-columns:1fr;background:#FFFEF8;color:#2A2D33;border-radius:6px;box-shadow:0 20px 40px -12px rgba(0,0,0,.45);height:min(78dvh,720px);overflow:hidden;position:relative}
+.spread.two{grid-template-columns:1fr 1fr}
+.spread.two::after{content:"";position:absolute;left:50%;top:0;bottom:0;width:28px;transform:translateX(-50%);background:linear-gradient(90deg,transparent,rgba(0,0,0,.1) 45%,rgba(0,0,0,.16) 50%,rgba(0,0,0,.1) 55%,transparent);pointer-events:none}
+.page{padding:clamp(22px,4vw,42px);overflow-y:auto;min-width:0;display:flex;flex-direction:column;gap:14px;animation:turn .28s ease}
+@keyframes turn{from{opacity:.25;transform:translateX(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.page{animation:none}.spine,.case-card{transition:none}}
+.p-label{font-size:12px;letter-spacing:.14em;color:#6A6F78}
+.p-title{font-family:var(--f-hand);font-weight:700;font-size:clamp(26px,3.6vw,36px);line-height:1.25;margin:0;text-wrap:balance}
+.p-meta{color:#5A606A;font-size:14px}
+.p-text{font-size:16px;line-height:1.95;margin:0;max-width:30em}
+.p-hand{font-family:var(--f-hand);font-size:20px;line-height:1.8}
+.p-sign{margin-top:auto;text-align:right;color:#5A606A;font-size:14px}
+.page.title{overflow:hidden;position:relative}
+.cover-wrap{flex:1 1 0;min-height:0;display:flex}
+.cover{height:100%;max-height:330px;max-width:100%;aspect-ratio:3/4;position:relative;border-radius:2px 6px 6px 2px;overflow:hidden;background:var(--gc);box-shadow:0 8px 16px -8px rgba(0,0,0,.4)}
+.page.title .seal{position:absolute;right:clamp(22px,4vw,42px);bottom:clamp(22px,4vw,42px);margin:0}
+.reader:not([hidden]) .reader-box{animation:fadein .3s ease both}
+.cover::before{content:"";position:absolute;inset:0 auto 0 0;width:10px;background:linear-gradient(90deg,rgba(0,0,0,.25),rgba(255,255,255,.12));z-index:2}
+.cover .art{position:absolute;inset:0;background-repeat:no-repeat}
+.cover .art.scan{background-size:230%;background-position:50% 40%}
+.cover .art.scan::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,var(--gc) 6%,color-mix(in srgb,var(--gc) 35%,transparent) 55%,transparent)}
+.cover.color .art.scan{background-image:none!important}
+.cover.color .art.scan::after{background:repeating-linear-gradient(135deg,rgba(255,255,255,.1) 0 6px,transparent 6px 14px)}
+.cover .art.card{background-size:cover;background-position:center}
+.cover .slip{position:absolute;top:12px;right:12px;z-index:2;background:#FFFEF8;color:#22262D;border:1px solid rgba(0,0,0,.18);writing-mode:vertical-rl;font-family:var(--f-hand);font-weight:700;padding:8px 5px;letter-spacing:.1em;line-height:1.1;font-size:15px;max-height:80%}
+.cover .art.card ~ .slip{display:none}
+.seal{width:84px;height:84px;border:3px solid var(--seal);color:var(--seal);font-family:var(--f-hand);font-weight:700;display:grid;place-items:center;text-align:center;line-height:1.15;font-size:15px;transform:rotate(-6deg);margin-top:auto;align-self:flex-end;opacity:.85}
+.scan{border:0;padding:0;background:none;cursor:zoom-in;flex:1;min-height:0;display:flex;justify-content:center}
+.scan img{max-height:100%;max-width:100%;object-fit:contain;box-shadow:0 2px 10px rgba(0,0,0,.18)}
+.scan-cap{font-size:13px;color:#6A6F78;text-align:center}
+.card-table{width:100%;border-collapse:collapse;font-size:14px;max-width:26em}
+.card-table th,.card-table td{border-bottom:1px solid #DDD7C6;padding:9px 6px;text-align:left;vertical-align:top}
+.card-table th{width:6.5em;color:#6A6F78;font-weight:500}
+.blank{background:repeating-linear-gradient(0deg,transparent 0 31px,rgba(0,0,0,.035) 31px 32px)}
+.lightbox{position:fixed;inset:0;z-index:60;background:rgba(10,12,16,.92);overflow:auto;display:grid;place-items:center;padding:calc(env(safe-area-inset-top,0px) + 50px) max(12px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 12px) max(12px,env(safe-area-inset-left,0px))}
+.lightbox img{max-width:100%;max-height:calc(100dvh - 80px);cursor:zoom-in}
+.lightbox.zoomed{place-items:start}
+.lightbox.zoomed img{max-width:none;max-height:none;width:min(1800px,220vw);cursor:zoom-out}
+.lb-close{position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);right:calc(env(safe-area-inset-right,0px) + 12px)}
+@media (prefers-reduced-motion:reduce){#view>*,.hint i,.entry.walking .photo{animation:none}.bookcase,.kid{transition:none}}
+@media (max-width:760px){.shelf{grid-template-columns:52px minmax(0,1fr)}.shelf-label{font-size:15px}}
+</style>
+
+<div class="wrap">
+  <header class="mast">
+    <img src="images/logo.png" alt="校徽">
+    <h1 class="grid-title" aria-label="明日小作家"><span>明</span><span>日</span><span>小</span><span>作</span><span>家</span></h1>
+    <span class="mast-sub">藏書間</span>
+  </header>
+  <main id="view"></main>
+  <footer class="foot">
+    <span>作品著作權屬於作者本人，經家長與學生同意後公開展示，姓名依規定遮蔽。</span>
+  </footer>
+</div>
+
+<div class="reader" id="reader" hidden role="dialog" aria-modal="true" aria-labelledby="r-title">
+  <div class="reader-box">
+    <div class="reader-top"><h3 id="r-title"></h3><button class="icon-btn" id="r-close">關閉</button></div>
+    <div class="spread" id="spread"></div>
+    <div class="reader-nav"><button class="icon-btn" id="r-prev">← 上一頁</button><span id="r-count"></span><button class="icon-btn" id="r-next">下一頁 →</button></div>
+  </div>
+</div>
+<div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-label="作品原稿放大檢視">
+  <button class="icon-btn lb-close" id="lb-close">關閉</button><img id="lb-img" alt="">
+</div>
+
+<script>
+/* ========= 設定 =========
+   SHEET_CSV_URL：「書架總表」發布為 CSV 的網址。
+   COVER_MODE：書名頁封面樣式，'scan' = 用原稿局部當封面，'color' = 文類顏色封面。
+   圖檔放在網站 images/ 資料夾，總表「圖檔」欄填檔名（多頁用逗號分隔）。 */
+const SHEET_CSV_URL = '';
+const COVER_MODE = 'scan';
+const IMAGE_DIR = 'images/';
+const PHOTO = IMAGE_DIR + 'entrance.jpg';
+const GRADES = ['一年級','二年級','三年級','四年級','五年級','六年級'];
+const GENRES = {'記敘文':'--g-prose','應用文':'--g-diary','詩歌':'--g-poem','論說文':'--g-tale'};
+const HAND = '"LXGW WenKai TC","Kaiti TC","BiauKai","DFKai-SB",serif';
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;}}
+
+/* ========= 讀取「書架總表」 ========= */
+function parseCSV(text){const rows=[];let row=[],f='',q=false;for(let i=0;i<text.length;i++){const c=text[i];if(q){if(c==='"'){if(text[i+1]==='"'){f+='"';i++;}else q=false;}else f+=c;}else if(c==='"')q=true;else if(c===','){row.push(f);f='';}else if(c==='\n'||c==='\r'){if(c==='\r'&&text[i+1]==='\n')i++;row.push(f);rows.push(row);row=[];f='';}else f+=c;}if(f!==''||row.length){row.push(f);rows.push(row);}return rows.filter(r=>r.some(v=>v.trim()!==''));}
+async function loadSheet(url){
+  const res=await fetch(url,{cache:'no-store'});if(!res.ok)throw new Error('無法讀取書架總表（'+res.status+'）');
+  const [head,...rows]=parseCSV(await res.text());const idx=n=>head.findIndex(h=>h.trim()===n);const get=(r,n)=>{const i=idx(n);return i<0?'':(r[i]||'').trim();};
+  return rows.map(r=>({year:get(r,'學年度'),grade:get(r,'年級'),title:get(r,'作品標題'),genre:get(r,'文類'),author:get(r,'作者'),cls:get(r,'班級')||get(r,'推薦老師').split('導師')[0].trim(),date:get(r,'投稿日期'),authorNote:get(r,'作者的話'),teacher:get(r,'推薦老師'),recommend:get(r,'推薦序'),parent:get(r,'家長的話'),
+    scans:get(r,'圖檔').split(/[,，]/).map(s=>s.trim()).filter(Boolean).map(s=>({src:IMAGE_DIR+s})),coverCard:get(r,'封面小卡')?{src:IMAGE_DIR+get(r,'封面小卡')}:null})).filter(b=>b.title);
+}
+
+/* ========= 畫面 ========= */
+let LOAD_ERR=false,BOOKS=[],genre='全部',mode=COVER_MODE,cur=null,pageIdx=0;
+const imgOf=(b,s)=>s.src||'';
+const gcOf=b=>`var(${GENRES[b.genre]||'--pencil'})`;
+const years=()=>[...new Set(BOOKS.map(b=>b.year))].sort((a,b)=>b-a);
+
+function lobby(){
+  return `<section class="entry" id="entry">
+    <h2>每一位小作家，都在這裡有一本書</h2>
+    <button class="photo" id="enter" aria-label="走進藏書間"><img src="${PHOTO}" alt="學校校舍" onerror="this.style.visibility=\'hidden\'"><span class="photo-cap" style="position:absolute;left:0;right:0;bottom:8px;font-family:var(--f-hand);font-size:17px;color:var(--muted)">明日小作家藏書間</span></button>
+    <span class="hint"><i></i>點照片，走進藏書間</span></section>`;
+}
+function cases(){
+  return `<section><button class="back" data-go="">← 回到校園</button>
+    <h2 class="cases-title">選一座書櫃</h2>
+    <p class="lead">每個學年度是一座書櫃，每個年級是一層書架。打開書，可以讀到作者的話、老師的推薦序，還有作品的手寫原稿。</p>
+    ${years().length?'':`<p class="notice">${LOAD_ERR?'書櫃暫時無法開啟，請稍後再試。':'書櫃正在整理中，敬請期待。'}</p>`}
+    <div class="cases">${years().map(y=>{
+      const yb=BOOKS.filter(b=>b.year===y);
+      const mini=GRADES.slice(0,3).map((g,gi)=>`<div>${yb.filter(b=>b.grade===GRADES[gi*2]).slice(0,9).map((b,k)=>`<i style="--c:${gcOf(b)};--h:${70+((k*37+gi*13)%30)}%"></i>`).join('')}</div>`).join('');
+      return `<button class="case-card" data-year="${esc(y)}"><span class="mini" aria-hidden="true">${mini}</span><span><strong>${esc(y)} 學年度</strong><span>${yb.length} 本・${new Set(yb.map(b=>b.grade)).size} 個年級</span></span></button>`;
+    }).join('')}</div></section>`;
+}
+const KID=`<div class="kid" id="kid" aria-hidden="true"><span class="kid-say" id="kid-say"></span><svg viewBox="0 0 120 170" width="120" height="170">
+  <ellipse cx="60" cy="164" rx="34" ry="5" fill="rgba(80,55,20,.25)"/>
+  <g class="leg-l"><rect x="44" y="112" width="13" height="42" rx="5" fill="#F3C9A4"/><rect x="40" y="150" width="20" height="10" rx="5" fill="#3B4A6B"/></g>
+  <g class="leg-r"><rect x="63" y="112" width="13" height="42" rx="5" fill="#F3C9A4"/><rect x="60" y="150" width="20" height="10" rx="5" fill="#3B4A6B"/></g>
+  <g class="body">
+    <rect x="40" y="98" width="40" height="24" rx="6" fill="#2F4A7A"/>
+    <rect x="36" y="62" width="48" height="44" rx="12" fill="#FFFFFF" stroke="#D9D2BE" stroke-width="2"/>
+    <rect x="40" y="66" width="40" height="38" rx="10" fill="#E8728C"/>
+    <rect x="46" y="72" width="28" height="14" rx="5" fill="#F5CF55"/>
+    <path d="M44 66 L48 104 M76 66 L72 104" stroke="#C4566F" stroke-width="3"/>
+    <rect x="28" y="70" width="10" height="36" rx="5" fill="#F3C9A4"/>
+    <g id="arm"><rect x="81" y="68" width="10" height="40" rx="5" fill="#F3C9A4"/><circle cx="86" cy="108" r="6" fill="#F3C9A4"/></g>
+    <circle cx="60" cy="40" r="23" fill="#F3C9A4"/>
+    <path d="M37 42 C35 18 50 13 60 13 C72 13 86 19 83 44 C80 33 72 30 60 30 C48 30 40 34 37 42 Z" fill="#2B2B33"/>
+    <path d="M38 38 C40 52 46 58 60 60 C74 58 80 52 82 38 C78 46 70 48 60 48 C50 48 42 46 38 38 Z" fill="#2B2B33"/>
+    <circle cx="44" cy="22" r="7" fill="#2B2B33"/><circle cx="76" cy="22" r="7" fill="#2B2B33"/>
+    <rect x="70" y="16" width="10" height="5" rx="2" fill="#E8728C"/>
+  </g></svg></div>`;
+function bookcase(y){
+  const yb=BOOKS.filter(b=>b.year===y);
+  const chips=['全部',...Object.keys(GENRES)].map(g=>`<button class="chip" data-g="${g}" aria-pressed="${g===genre}" style="--c:${GENRES[g]?`var(${GENRES[g]})`:'var(--pencil)'}">${g==='全部'?'':'<i></i>'}${g}</button>`).join('');
+  const shelves=GRADES.map(g=>{
+    const gb=yb.filter(b=>b.grade===g);
+    const sp=gb.map(b=>{const i=BOOKS.indexOf(b),h=204+(i*29%26),fs=b.title.length>8?12:b.title.length>6?13:15;
+      return `<button class="spine" data-i="${i}" style="--gc:${gcOf(b)};--h:${h}px;--fs:${fs}px" aria-label="${esc(b.title)}，${esc(b.cls)} ${esc(b.author)}，${esc(b.genre)}" title="${esc(b.title)}｜${esc(b.cls)} ${esc(b.author)}"><span>${esc(b.title)}</span><span class="who">${esc(shortCls(b))}<br>${esc(b.author)}</span></button>`;}).join('');
+    return `<div class="shelf"><div class="shelf-label">${g.replace('年級','')}<br>年級<small>${gb.length} 本</small></div><div class="spines">${sp||'<span style="color:var(--muted);padding-bottom:20px">尚無作品</span>'}</div></div>`;
+  }).join('');
+  return `<section><div class="case-head"><div><button class="back" data-go="cases">← 回到書櫃選擇</button><h2>${esc(y)} 學年度書櫃</h2></div></div>
+    ${ribbons(y,null)}
+    <div class="stage" id="stage"><div class="bookcase" id="case">${shelves}</div></div>
+    <div class="legend"><span>共 ${yb.length} 本</span></div></section>${KID}`;
+}
+const GKEY={narr:'記敘文',apply:'應用文',poem:'詩歌',essay:'論說文'};
+const keyOf=g=>Object.keys(GKEY).find(k=>GKEY[k]===g);
+const shortCls=b=>(b.cls||'').replace('年','').replace('班','');
+function ribbons(y,active){
+  const yb=BOOKS.filter(b=>b.year===y);
+  const L=(label,on)=>46+label.length*17+(on?22:0);
+  const items=[`<button class="ribbon all" data-go="y${esc(y)}" ${active?'':'aria-current="page"'} style="--len:${L('全部',!active)}px"><span>全部</span><small>${yb.length}</small></button>`,
+    ...Object.entries(GKEY).map(([k,g])=>`<button class="ribbon" data-go="y${esc(y)}-${k}" ${active===k?'aria-current="page"':''} style="--c:var(${GENRES[g]});--len:${L(g,active===k)}px"><span>${g}</span><small>${yb.filter(b=>b.genre===g).length}</small></button>`)];
+  return `<nav class="ribbons" aria-label="文類書籤">${items.join('')}</nav><p class="ribbon-tip">拉一條書籤，進入該文類的專區</p>`;
+}
+function coverHTML(b){
+  return `<div class="cover ${mode==='color'?'color':''}" style="--gc:${gcOf(b)}">${b.coverCard?`<div class="art card" data-lazy="card"></div>`:`<div class="art scan" data-lazy="scan"></div>`}<span class="slip">${esc(b.title)}</span></div>`;
+}
+function genrePage(y,k){
+  const g=GKEY[k],gb=BOOKS.filter(b=>b.year===y&&b.genre===g);
+  const secs=GRADES.map(gr=>{const list=gb.filter(b=>b.grade===gr);if(!list.length)return '';
+    return `<section class="gsec"><h3>${gr}<small>${list.length} 篇</small></h3><div class="covers">${list.map(b=>`<button class="gcover" data-i="${BOOKS.indexOf(b)}" aria-label="${esc(b.title)}，${esc(b.cls)} ${esc(b.author)}">${coverHTML(b)}<b>${esc(b.title)}</b><span class="c">${esc(b.cls)}　${esc(b.author)}</span></button>`).join('')}</div></section>`;}).join('');
+  return `<section><div class="gpage-head"><div><button class="back" data-go="y${esc(y)}">← 回到 ${esc(y)} 學年度書櫃</button>
+    <h2 style="--c:var(${GENRES[g]})"><i></i>${esc(y)} 學年度・${g}</h2></div></div>
+    ${ribbons(y,k)}
+    ${secs||`<p class="gnone">這個學年度還沒有「${g}」的作品。</p>`}</section>`;
+}
+/* 封面圖逐張載入，避免一次產生太多圖造成卡頓 */
+function fillCovers(){
+  const els=[...document.querySelectorAll('.gcover')];let n=0;
+  (function step(){const end=Math.min(n+3,els.length);for(;n<end;n++){const el=els[n],b=BOOKS[+el.dataset.i],i=+el.dataset.i,art=el.querySelector('.art');
+      const u=b.coverCard?imgOf(b,b.coverCard,i*7+3):(b.scans[0]?imgOf(b,b.scans[0],i*7+1):'');if(u&&art)art.style.backgroundImage=`url('${u}')`;}
+    if(n<els.length&&document.contains(els[0]))setTimeout(step,16);})();
+}
+function route(){
+  const h=location.hash,m=h.match(/^#y(\d+)(?:-(narr|apply|poem|essay))?$/),y=m&&years().includes(m[1])?m[1]:null;
+  $('#view').innerHTML=y?(m[2]?genrePage(y,m[2]):bookcase(y)):h==='#cases'?cases():lobby();
+  if(y&&m[2]&&mode==='scan')fillCovers();
+  window.scrollTo(0,0);
+}
+const reduced=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* 小孩走到書旁邊，伸手指向滑過的書 */
+let walkT;
+function kidTo(sp){
+  const kid=$('#kid');if(!kid||getComputedStyle(kid).display==='none')return;
+  const r=sp.getBoundingClientRect(),W=120;
+  const x=Math.max(8,Math.min(innerWidth-W-8,r.left-W*.72));
+  if(Math.abs(parseFloat(kid.style.left||40)-x)>4){kid.classList.add('walk');clearTimeout(walkT);walkT=setTimeout(()=>kid.classList.remove('walk'),700);}
+  kid.style.left=x+'px';
+  const sx=x+86,sy=innerHeight-170+74,tx=r.left+r.width/2,ty=r.top+Math.min(r.height*.5,60);
+  const deg=Math.atan2(ty-sy,tx-sx)*180/Math.PI-90;
+  kid.querySelector('#arm').style.transform=`rotate(${Math.max(-200,Math.min(30,deg))}deg)`;
+  const say=$('#kid-say');say.textContent=`想看「${BOOKS[+sp.dataset.i].title}」`;say.classList.add('on');
+}
+function kidRest(){const kid=$('#kid');if(!kid)return;kid.querySelector('#arm').style.transform='';$('#kid-say').classList.remove('on');}
+
+/* 書從書架抽出來，再打開 */
+function pullOut(sp,done){
+  if(reduced())return done();
+  const r=sp.getBoundingClientRect(),c=sp.cloneNode(true);
+  c.classList.add('flying');Object.assign(c.style,{left:r.left+'px',top:r.top+'px',width:r.width+'px',height:r.height+'px'});
+  document.body.append(c);sp.style.visibility='hidden';
+  const tx=innerWidth/2-(r.left+r.width/2),ty=innerHeight/2-(r.top+r.height/2);
+  const a=c.animate([
+    {transform:'translate(0,0)'},
+    {transform:`translate(0,${-r.height*.6}px)`,offset:.4},
+    {transform:`translate(${tx*.5}px,${ty*.5-r.height*.4}px) scale(1.6) rotate(-6deg)`,offset:.7},
+    {transform:`translate(${tx}px,${ty}px) scale(2.6) rotate(0deg)`,opacity:0}
+  ],{duration:900,easing:'cubic-bezier(.45,.05,.3,1)'});
+  a.onfinish=()=>{c.remove();sp.style.visibility='';done();};
+}
+
+function pagesFor(b){
+  const i=BOOKS.indexOf(b),gc=gcOf(b),P=[];
+  const art=b.coverCard?`<div class="art card" style="background-image:url('${imgOf(b,b.coverCard,i*7+3)}')"></div>`
+    :`<div class="art scan" style="background-image:url('${b.scans[0]?imgOf(b,b.scans[0],i*7+1):''}')"></div>`;
+  P.push(`<div class="page title" style="--gc:${gc}"><div class="cover-wrap"><div class="cover ${mode==='color'?'color':''}">${art}<span class="slip">${esc(b.title)}</span></div></div>
+    <h4 class="p-title">${esc(b.title)}</h4><div class="p-meta">${esc(b.cls)}　${esc(b.author)}　著・${esc(b.genre)}${b.coverCard?'・封面為作者自繪':''}</div>
+    <div class="seal" aria-hidden="true">明日<br>小作家<br>${esc(b.year)}</div></div>`);
+  if(b.authorNote)P.push(`<div class="page"><span class="p-label">作者的話</span><p class="p-text p-hand">${esc(b.authorNote)}</p><div class="p-sign">${esc(b.author)}</div></div>`);
+  if(b.recommend)P.push(`<div class="page"><span class="p-label">推薦序</span><p class="p-text">${esc(b.recommend)}</p><div class="p-sign">${esc(b.teacher)}</div></div>`);
+  b.scans.forEach((s,k)=>{const u=imgOf(b,s,i*7+1+k);P.push(`<div class="page"><span class="p-label">作品原稿${b.scans.length>1?`　第 ${k+1} 頁`:''}</span><button class="scan" data-src="${u}" aria-label="放大檢視原稿"><img src="${u}" alt="${esc(b.title)} 原稿"></button><span class="scan-cap">點擊原稿可放大</span></div>`);});
+  if(b.parent)P.push(`<div class="page"><span class="p-label">給小作家的話</span><p class="p-text p-hand">${esc(b.parent)}</p><div class="p-sign">家長</div></div>`);
+  P.push(`<div class="page"><span class="p-label">藏書卡</span><table class="card-table"><tr><th>書名</th><td>${esc(b.title)}</td></tr><tr><th>作者</th><td>${esc(b.cls)}　${esc(b.author)}</td></tr><tr><th>文類</th><td>${esc(b.genre)}</td></tr><tr><th>收錄</th><td>${esc(b.year)} 學年度 明日小作家</td></tr><tr><th>投稿日期</th><td>${esc(b.date)}</td></tr><tr><th>推薦人</th><td>${esc(b.teacher)}</td></tr></table></div>`);
+  return P;
+}
+const perView=()=>window.innerWidth>=820?2:1;
+function showPages(){
+  const P=pagesFor(cur),n=perView(),sp=$('#spread');
+  pageIdx=Math.max(0,Math.min(pageIdx-(pageIdx%n),P.length-1));
+  sp.className='spread'+(n===2?' two':'');
+  let html=P.slice(pageIdx,pageIdx+n).join('');if(n===2&&pageIdx+1>=P.length)html+='<div class="page blank" aria-hidden="true"></div>';
+  sp.innerHTML=html;const end=Math.min(pageIdx+n,P.length);
+  $('#r-count').textContent=end-pageIdx>1?`第 ${pageIdx+1}–${end} 頁／共 ${P.length} 頁`:`第 ${pageIdx+1} 頁／共 ${P.length} 頁`;
+  $('#r-prev').disabled=pageIdx===0;$('#r-next').disabled=pageIdx+n>=P.length;
+}
+let lastFocus=null;
+function openBook(i){cur=BOOKS[i];pageIdx=0;lastFocus=document.activeElement;$('#r-title').textContent=`${cur.title}｜${cur.cls} ${cur.author}`;$('#reader').hidden=false;document.body.style.overflow='hidden';showPages();$('#r-close').focus();}
+function closeBook(){$('#reader').hidden=true;document.body.style.overflow='';cur=null;lastFocus&&lastFocus.focus();}
+function turn(d){if(!cur)return;pageIdx+=d*perView();showPages();}
+
+document.addEventListener('click',e=>{
+  const t=e.target;
+  const sp=t.closest('.spine');if(sp){kidTo(sp);return pullOut(sp,()=>openBook(+sp.dataset.i));}
+  const gc=t.closest('.gcover');if(gc){return pullOut(gc.querySelector('.cover'),()=>openBook(+gc.dataset.i));}
+  if(t.closest('#enter')){const en=$('#entry');if(reduced()){location.hash='cases';return;}en.classList.add('walking');setTimeout(()=>{location.hash='cases';},780);return;}
+  const cc=t.closest('.case-card');if(cc){genre='全部';location.hash='y'+cc.dataset.year;return;}
+  const go=t.closest('[data-go]');if(go){location.hash=go.dataset.go;return;}
+  const chip=t.closest('.chip');if(chip){genre=chip.dataset.g;route();return;}
+  const md=t.closest('[data-mode]');if(md){mode=md.dataset.mode;try{localStorage.setItem('shelf-mode',mode)}catch(_){}route();return;}
+  const sc=t.closest('.scan');if(sc){$('#lb-img').src=sc.dataset.src;$('#lightbox').classList.remove('zoomed');$('#lightbox').hidden=false;$('#lb-close').focus();return;}
+  if(t.id==='lb-img')return $('#lightbox').classList.toggle('zoomed');
+  if(t.id==='lightbox'||t.id==='lb-close'){$('#lightbox').hidden=true;return;}
+  if(t.id==='reader'||t.id==='r-close')return closeBook();
+  if(t.id==='r-prev')return turn(-1);
+  if(t.id==='r-next')return turn(1);
+});
+document.addEventListener('keydown',e=>{
+  if(!$('#lightbox').hidden){if(e.key==='Escape')$('#lightbox').hidden=true;return;}
+  if(!cur)return;if(e.key==='Escape')closeBook();else if(e.key==='ArrowRight')turn(1);else if(e.key==='ArrowLeft')turn(-1);
+});
+window.addEventListener('hashchange',route);
+document.addEventListener('mouseover',e=>{const sp=e.target.closest&&e.target.closest('.spine');if(sp)kidTo(sp);});
+document.addEventListener('mouseout',e=>{if(e.target.closest&&e.target.closest('.spine')&&!(e.relatedTarget&&e.relatedTarget.closest&&e.relatedTarget.closest('.spine')))kidRest();});
+let rz;window.addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(()=>cur&&showPages(),150);});
+
+(async function start(){
+  $('#view').innerHTML='<p class="notice">正在整理書櫃…</p>';
+  if(SHEET_CSV_URL){
+    try{BOOKS=await loadSheet(SHEET_CSV_URL);}
+    catch(err){BOOKS=[];LOAD_ERR=true;console.error(err);}
+  }else console.warn('尚未設定 SHEET_CSV_URL');
+  route();
+})();
+</script>
